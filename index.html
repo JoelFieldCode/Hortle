@@ -1,0 +1,1620 @@
+
+Claude finished the response
+
+Architected hybrid Wordle-flashcard app with botanical design aesthetic
+Architected hybrid Wordle-flashcard app with botanical design aesthetic
+I'll build this as an interactive app — a "Wordle for plant problems" where you guess the pest/disease/disorder from clues, then flip to a specimen card with the full treatment info, plus a browsable study deck. Let me set it up properly.
+
+
+Ran 2 commands, created a file
+Ran 2 commands, created a file
+Good, syntax checks out. Let me also verify no duplicate guess words (which would break the "no repeat" logic and game variety) and copy to outputs.
+
+
+Validate dataset integrity
+Validate dataset integrity
+Data checks out — 28 unique problems, all valid guess words. Copying to outputs now.
+
+
+Ran a command, read a file
+Ran a command, read a file
+Here's Hortle — a Wordle-for-horticulture app, covering 28 common pests, diseases, and disorders.
+
+Two modes:
+
+Diagnose: You get symptom "case notes" as a clue, then guess the name in a Wordle-style grid (green = right letter/spot, amber = right letter/wrong spot, grey = not in the word). Win, lose, or give up — either way you get a full "specimen card" with symptoms, cause, treatment, and prevention.
+Study Deck: Flip through all 28 as flashcards, filterable by pest/disease/disorder, with shuffle.
+A few notes on how it's built: the color feedback deliberately echoes plant health (green = healthy, amber = wilting, grey = dried out), and the flashcards are styled like herbarium specimen cards with catalog numbers. It's a single HTML file with no external dependencies, so it'll open straight in any browser — just note that progress (stats, deck position) resets on reload since it doesn't persist between sessions.
+
+
+Hortle
+Code · HTML 
+the 2nd attempt should pre-fill the correct letters, and the keyboard itself doesn't need to show the correct letters. So I guess that means if a letter is pre-filled from previous attempts then typing skips to the next box that isn't pre-filled?
+
+
+Deliberated input mechanics and letter-skipping logic
+Deliberated input mechanics and letter-skipping logic
+Now I have full context. Let me rewrite the state and logic for pre-filled locked letters:
+
+
+Edited 2 files
+Edited 2 files
+Now add the prepareNextRow function and update renderGrid:
+
+
+Add prepareNextRow helper that resets the active row from the locked mask
+Add prepareNextRow helper that resets the active row from the locked mask
+Now simplify the keyboard to drop letter-coloring, and rewrite handleKey / submitGuess for the skip-locked-slots behavior:
+
+
+Edited a file, ran a command
+Edited a file, ran a command
+Good, that's intact. Now add a small visual cue for locked (pre-filled) tiles so they read as "carried over" rather than just newly typed correct letters:
+
+
+Add a subtle visual marker for pre-filled/locked tiles
+Add a subtle visual marker for pre-filled/locked tiles
+Now check the physical keyboard listener and syntax overall:
+
+
+Verify syntax and confirm no leftover references to old currentGuess variable
+Verify syntax and confirm no leftover references to old currentGuess variable
+No leftover references. Let's do a quick logic trace with node to confirm the pre-fill/skip behavior works correctly:
+
+
+Simulate pre-fill and skip-to-next-empty-box logic
+Simulate pre-fill and skip-to-next-empty-box logic
+The logic works exactly as intended — locked correct letters (R, S) stay pinned, and typing fills only the two open slots in order. Copying the update to outputs:
+
+
+Ran a command, read a file
+Ran a command, read a file
+Done. Now:
+
+Any letter you got right stays pinned (shown with a subtle inset border so you can tell it carried over) into the next attempt.
+Typing and backspacing only moves through the boxes that are still open — it skips right past the locked ones.
+The on-screen keyboard no longer colours letters, since the boxes now carry that information directly.
+
+Hortle
+Code · HTML 
+can we do a new assessment type for treatments you would use for a specific disease. Also the enter button on the keyboard needs to be more prominent, possibly a bigger "submit" button?
+
+
+Architected treatment assessment mode with restructured data and enhanced UI submission
+Architected treatment assessment mode with restructured data and enhanced UI submission
+Two additions coming: a new "Treat It" assessment mode (pick the right treatments for a given diagnosis), and a more prominent submit control for the Diagnose game. Let me start by adding atomic treatment-action data to each entry, since the new mode needs discrete selectable options.
+
+
+Insert atomic treatment-action arrays into each dataset entry
+Insert atomic treatment-action arrays into each dataset entry
+All 28 entries updated. Let's verify the data integrity:
+
+
+Validate actions field on all entries
+Validate actions field on all entries
+All entries have valid 3-item actions arrays. Now let's add the third tab, the Treat It panel, and its styling/logic:
+
+
+Add third tab button for the new Treat It mode
+Add third tab button for the new Treat It mode
+Now add the panel markup right before the Study Deck section:
+
+
+Insert the Treat It panel markup between Diagnose and Study Deck sections
+Insert the Treat It panel markup between Diagnose and Study Deck sections
+Now the CSS for the new mode and the prominent submit button:
+
+
+Add CSS for treat mode components and the prominent submit button
+Add CSS for treat mode components and the prominent submit button
+Now update setMode for the third tab, and add the JS logic for the Treat It mode plus a bigger submit button in the Diagnose panel:
+
+
+Update setMode to handle three tabs
+Update setMode to handle three tabs
+Now add the prominent submit button to the Diagnose panel, below the keyboard:
+
+
+Edited 4 files, ran a command
+Edited 4 files, ran a command
+I accidentally deleted the function declaration line. Let me fix that:
+
+
+Ran a command, viewed a file, edited a file
+Ran a command, viewed a file, edited a file
+Fixed. Let's verify syntax now:
+
+
+Re-verify syntax after fix
+Re-verify syntax after fix
+Good. Now let's add the JS logic for the Treat It mode itself, plus initialize it on load:
+
+
+Ran a command, viewed a file
+Ran a command, viewed a file
+Now let's insert the full Treat It mode logic here:
+
+
+Insert Treat It mode game logic
+Insert Treat It mode game logic
+Now initialize startTreatCase() at load time. Let's find the init block:
+
+
+Ran a command, edited a file
+Ran a command, edited a file
+Now let's syntax-check and do a logic sanity check on the Treat It scoring:
+
+
+Ran 2 commands
+Ran 2 commands
+No duplicates. Let's also simulate the Treat It selection/scoring logic with node to be safe:
+
+
+Simulate Treat It option building and scoring
+Simulate Treat It option building and scoring
+Logic confirmed working correctly. Copying the finished app to outputs:
+
+
+Ran a command, read a file
+Ran a command, read a file
+Two things added:
+
+Treat It mode (new third tab) — you're shown a diagnosed patient (name, category, symptoms) and 6 treatment options, 3 correct and 3 plausible-but-wrong ones pulled from other problems. You tick every treatment you'd use, submit, and get per-option feedback: green check for right calls, amber "!" for treatments you missed, red cross for ones that wouldn't actually help. It tracks attempts and how many plans were spot-on.
+
+Bigger submit button — Diagnose mode now has a full-width green "Submit diagnosis" button below the keyboard, with a pressed-in shadow effect for tactile feedback, so you don't have to rely on the tiny on-screen ENTER key.
+
+
+Hortle
+Code · HTML 
+instead of select all that apply, put select the number that are correct i.e. i want to be told how many answers you want.
+
+
+Edited 2 files
+Edited 2 files
+Now update toggleTreatOption to cap selections at the required count, and update submitTreatment to require exactly that many selected:
+
+
+Edited 2 files
+Edited 2 files
+Now let's check syntax and copy the update:
+
+
+Ran a command, read a file
+Ran a command, read a file
+Done. Treat It now tells you upfront — "Select the 3 treatments you'd use for this case" — and enforces it: once you've picked that many, further taps are blocked with a nudge to deselect first, and submitting early tells you how many more you need to pick.
+
+
+Hortle
+Code · HTML 
+the order of diagnose and treat it questions should be random on each page load
+
+
+Architected shuffled-queue system for randomized question ordering
+Architected shuffled-queue system for randomized question ordering
+
+You are out of free messages until 7:40 PM
+
+
+
+
+Claude is AI and can make mistakes. Please double-check responses.
+
+
+Hortle · HTML
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Hortle — Diagnose the Garden</title>
+<style>
+  :root{
+    --paper: #EEF1E6;
+    --paper-line: #C7CBB0;
+    --ink: #1F2E22;
+    --ink-soft: #4B5A4C;
+    --card-bg: #FBF9F1;
+    --pest: #6B7A3A;
+    --pest-bg: #E4E9D2;
+    --disease: #A63D2F;
+    --disease-bg: #F1DCD6;
+    --disorder: #3F6583;
+    --disorder-bg: #DCE5EC;
+    --correct: #3E7C57;
+    --present: #C98A2C;
+    --absent: #8B8375;
+    --tile-empty: #FFFFFF;
+    --shadow: 0 1px 2px rgba(31,46,34,0.08), 0 4px 14px rgba(31,46,34,0.08);
+    --serif: Georgia, 'Iowan Old Style', 'Palatino Linotype', 'Book Antiqua', serif;
+    --sans: -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+    --mono: 'SFMono-Regular', Menlo, Consolas, 'Liberation Mono', monospace;
+  }
+ 
+  * { box-sizing: border-box; }
+ 
+  @media (prefers-reduced-motion: reduce){
+    * { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
+  }
+ 
+  html, body {
+    margin: 0;
+    padding: 0;
+    background: var(--paper);
+    color: var(--ink);
+    font-family: var(--sans);
+    background-image:
+      radial-gradient(circle at 1px 1px, rgba(31,46,34,0.05) 1px, transparent 0);
+    background-size: 22px 22px;
+  }
+ 
+  .app {
+    max-width: 620px;
+    margin: 0 auto;
+    padding: 20px 16px 60px;
+  }
+ 
+  header {
+    text-align: center;
+    padding: 12px 0 18px;
+    border-bottom: 1px solid var(--paper-line);
+    margin-bottom: 18px;
+  }
+ 
+  .eyebrow {
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--ink-soft);
+  }
+ 
+  h1 {
+    font-family: var(--serif);
+    font-size: 40px;
+    font-weight: 700;
+    margin: 4px 0 6px;
+    letter-spacing: 0.01em;
+  }
+ 
+  h1 .leaf { color: var(--correct); }
+ 
+  .tagline {
+    font-size: 14px;
+    color: var(--ink-soft);
+    font-style: italic;
+  }
+ 
+  nav.tabs {
+    display: flex;
+    gap: 8px;
+    justify-content: center;
+    margin-bottom: 20px;
+  }
+ 
+  .tab-btn {
+    font-family: var(--sans);
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+    padding: 9px 18px;
+    border-radius: 999px;
+    border: 1px solid var(--paper-line);
+    background: var(--card-bg);
+    color: var(--ink-soft);
+    cursor: pointer;
+    transition: background 0.15s, color 0.15s, transform 0.1s;
+  }
+  .tab-btn:hover { transform: translateY(-1px); }
+  .tab-btn.active {
+    background: var(--ink);
+    color: var(--paper);
+    border-color: var(--ink);
+  }
+  .tab-btn:focus-visible { outline: 2px solid var(--disorder); outline-offset: 2px; }
+ 
+  /* ---------- Category chips ---------- */
+  .chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    padding: 4px 10px;
+    border-radius: 999px;
+    font-weight: 600;
+  }
+  .chip.pest { background: var(--pest-bg); color: var(--pest); }
+  .chip.disease { background: var(--disease-bg); color: var(--disease); }
+  .chip.disorder { background: var(--disorder-bg); color: var(--disorder); }
+ 
+  /* ---------- Diagnose mode ---------- */
+  .panel { display: none; }
+  .panel.active { display: block; }
+ 
+  .clue-card {
+    background: var(--card-bg);
+    border: 1px solid var(--paper-line);
+    border-radius: 10px;
+    padding: 18px 20px;
+    box-shadow: var(--shadow);
+    margin-bottom: 20px;
+    text-align: center;
+  }
+  .clue-card .clue-label {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--ink-soft);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    margin-bottom: 8px;
+  }
+  .clue-text {
+    font-family: var(--serif);
+    font-size: 18px;
+    line-height: 1.5;
+    color: var(--ink);
+  }
+  .clue-two {
+    display: none;
+    margin-top: 10px;
+    padding-top: 10px;
+    border-top: 1px dashed var(--paper-line);
+    font-size: 15px;
+    color: var(--ink-soft);
+  }
+  .clue-two.show { display: block; }
+  .btn.small {
+    font-size: 12px;
+    padding: 6px 14px;
+    margin-top: 14px;
+  }
+  .btn.small:disabled {
+    opacity: 0.45;
+    cursor: default;
+  }
+ 
+  #game-row {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 18px;
+    margin-bottom: 18px;
+  }
+  #grid-wrap { display: flex; justify-content: center; overflow-x: auto; }
+  #attempts-side {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    border-left: 1px dashed var(--paper-line);
+    padding-left: 16px;
+    min-width: 54px;
+  }
+  .attempts-num {
+    font-family: var(--serif);
+    font-size: 34px;
+    font-weight: 700;
+    line-height: 1;
+    color: var(--ink);
+    transition: color 0.2s;
+  }
+  .attempts-num.low { color: var(--disease); }
+  .attempts-label {
+    font-family: var(--mono);
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--ink-soft);
+    text-align: center;
+    margin-top: 4px;
+    line-height: 1.3;
+  }
+  .grid {
+    display: grid;
+    gap: 6px;
+  }
+  .tile {
+    width: clamp(26px, 7vw, 40px);
+    height: clamp(26px, 7vw, 40px);
+    border: 2px solid var(--paper-line);
+    border-radius: 6px;
+    background: var(--tile-empty);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: var(--mono);
+    font-weight: 700;
+    font-size: clamp(13px, 3.4vw, 18px);
+    color: var(--ink);
+    text-transform: uppercase;
+    transition: transform 0.15s, background 0.2s, border-color 0.2s, color 0.2s;
+  }
+  .tile.filled { border-color: var(--ink-soft); transform: scale(1.03); }
+  .tile.correct { background: var(--correct); border-color: var(--correct); color: #fff; }
+  .tile.locked { box-shadow: inset 0 0 0 2px rgba(255,255,255,0.55); }
+  .tile.present { background: var(--present); border-color: var(--present); color: #fff; }
+  .tile.absent  { background: var(--absent); border-color: var(--absent); color: #fff; }
+  .tile.flip { animation: flipTile 0.4s ease; }
+  @keyframes flipTile {
+    0% { transform: rotateX(0deg); }
+    50% { transform: rotateX(90deg); }
+    100% { transform: rotateX(0deg); }
+  }
+ 
+  #status-line {
+    text-align: center;
+    min-height: 20px;
+    font-size: 13px;
+    color: var(--disease);
+    font-weight: 600;
+    margin-bottom: 10px;
+  }
+ 
+  .keyboard {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    margin-bottom: 6px;
+  }
+  .kb-row { display: flex; gap: 5px; }
+  .key {
+    font-family: var(--sans);
+    font-size: 12px;
+    font-weight: 600;
+    padding: 10px 8px;
+    min-width: 28px;
+    text-align: center;
+    background: var(--card-bg);
+    border: 1px solid var(--paper-line);
+    border-radius: 5px;
+    cursor: pointer;
+    color: var(--ink);
+    user-select: none;
+    transition: background 0.15s, transform 0.05s;
+  }
+  .key:active { transform: translateY(1px); }
+  .key.wide { min-width: 52px; font-size: 10px; letter-spacing: 0.04em; }
+  .key.correct { background: var(--correct); color: #fff; border-color: var(--correct); }
+  .key.present { background: var(--present); color: #fff; border-color: var(--present); }
+  .key.absent  { background: var(--absent); color: #fff; border-color: var(--absent); }
+  .key:focus-visible { outline: 2px solid var(--disorder); outline-offset: 2px; }
+ 
+  .controls-row {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin: 14px 0 4px;
+  }
+  .btn {
+    font-family: var(--sans);
+    font-size: 13px;
+    font-weight: 600;
+    padding: 9px 16px;
+    border-radius: 7px;
+    border: 1px solid var(--ink);
+    background: var(--ink);
+    color: var(--paper);
+    cursor: pointer;
+  }
+  .btn.ghost { background: transparent; color: var(--ink); }
+  .btn:focus-visible { outline: 2px solid var(--disorder); outline-offset: 2px; }
+ 
+  .stats-line {
+    text-align: center;
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--ink-soft);
+    margin-top: 10px;
+  }
+ 
+  /* ---------- Prominent submit button ---------- */
+  .submit-btn {
+    background: var(--correct);
+    border-color: var(--correct);
+    color: #fff;
+    font-size: 15px;
+    padding: 14px 32px;
+    border-radius: 10px;
+    box-shadow: 0 3px 0 #2e6144, 0 6px 14px rgba(62,124,87,0.25);
+    letter-spacing: 0.02em;
+  }
+  .submit-btn:active { transform: translateY(2px); box-shadow: 0 1px 0 #2e6144; }
+  .submit-btn:disabled {
+    background: var(--absent);
+    border-color: var(--absent);
+    box-shadow: none;
+    cursor: default;
+    opacity: 0.55;
+  }
+ 
+  /* ---------- Treat It mode ---------- */
+  .treat-name {
+    font-family: var(--serif);
+    font-size: 22px;
+    margin: 8px 0 6px;
+  }
+  .treat-question {
+    text-align: center;
+    font-size: 14px;
+    color: var(--ink-soft);
+    margin-bottom: 14px;
+  }
+  .treat-option {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    background: var(--card-bg);
+    border: 1.5px solid var(--paper-line);
+    border-radius: 9px;
+    padding: 12px 16px;
+    margin-bottom: 9px;
+    cursor: pointer;
+    font-size: 14px;
+    line-height: 1.4;
+    transition: border-color 0.15s, background 0.15s;
+  }
+  .treat-option:hover:not(.locked) { border-color: var(--ink-soft); }
+  .treat-option .box {
+    width: 20px;
+    height: 20px;
+    min-width: 20px;
+    border: 2px solid var(--paper-line);
+    border-radius: 5px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 13px;
+    color: #fff;
+    margin-top: 1px;
+    transition: background 0.15s, border-color 0.15s;
+  }
+  .treat-option.selected .box { background: var(--ink); border-color: var(--ink); }
+  .treat-option.locked { cursor: default; }
+  .treat-option.result-correct { border-color: var(--correct); background: var(--pest-bg); }
+  .treat-option.result-correct .box { background: var(--correct); border-color: var(--correct); }
+  .treat-option.result-missed { border-color: var(--present); background: #FBF3E4; }
+  .treat-option.result-missed .box { background: transparent; border-color: var(--present); }
+  .treat-option.result-wrong { border-color: var(--disease); background: var(--disease-bg); }
+  .treat-option.result-wrong .box { background: var(--disease); border-color: var(--disease); }
+  .treat-option.result-neutral { opacity: 0.55; }
+  .treat-tag {
+    font-family: var(--mono);
+    font-size: 9.5px;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--ink-soft);
+    display: block;
+    margin-top: 3px;
+  }
+  .treat-feedback {
+    text-align: center;
+    font-size: 14px;
+    font-weight: 600;
+    min-height: 20px;
+    margin: 8px 0;
+    color: var(--ink);
+  }
+ 
+  /* ---------- Specimen card (flashcard) ---------- */
+  .specimen {
+    background: var(--card-bg);
+    border: 1px solid var(--paper-line);
+    border-radius: 4px 4px 10px 10px;
+    box-shadow: var(--shadow);
+    position: relative;
+    padding: 26px 22px 22px;
+    margin: 6px auto 0;
+    max-width: 480px;
+  }
+  .specimen::before {
+    content: "";
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 10px;
+    background-image: radial-gradient(circle, var(--paper) 3px, transparent 3.5px);
+    background-size: 16px 10px;
+    background-repeat: repeat-x;
+    background-position: center top;
+  }
+  .specimen .catalog-id {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--ink-soft);
+    letter-spacing: 0.08em;
+  }
+  .specimen h2 {
+    font-family: var(--serif);
+    font-size: 26px;
+    margin: 4px 0 10px;
+  }
+  .specimen .emoji-tag { font-size: 30px; margin-right: 8px; }
+  .field {
+    margin: 12px 0;
+  }
+  .field .flabel {
+    font-family: var(--mono);
+    font-size: 10.5px;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--ink-soft);
+    margin-bottom: 3px;
+  }
+  .field .fbody {
+    font-size: 14.5px;
+    line-height: 1.55;
+    color: var(--ink);
+  }
+  hr.dash {
+    border: none;
+    border-top: 1px dashed var(--paper-line);
+    margin: 14px 0;
+  }
+ 
+  /* ---------- Study mode ---------- */
+  .filter-row {
+    display: flex;
+    gap: 6px;
+    justify-content: center;
+    flex-wrap: wrap;
+    margin-bottom: 16px;
+  }
+  .filter-chip {
+    font-family: var(--mono);
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    padding: 6px 12px;
+    border-radius: 999px;
+    border: 1px solid var(--paper-line);
+    background: var(--card-bg);
+    cursor: pointer;
+    color: var(--ink-soft);
+  }
+  .filter-chip.on.pest { background: var(--pest); color: #fff; border-color: var(--pest); }
+  .filter-chip.on.disease { background: var(--disease); color: #fff; border-color: var(--disease); }
+  .filter-chip.on.disorder { background: var(--disorder); color: #fff; border-color: var(--disorder); }
+  .filter-chip.on.all { background: var(--ink); color: var(--paper); border-color: var(--ink); }
+ 
+  .flip-hint {
+    text-align: center;
+    font-size: 12px;
+    color: var(--ink-soft);
+    margin-top: 10px;
+    font-style: italic;
+  }
+ 
+  .study-card-wrap {
+    perspective: 1400px;
+    max-width: 480px;
+    margin: 0 auto;
+  }
+  .study-card {
+    position: relative;
+    min-height: 300px;
+    cursor: pointer;
+  }
+  .study-face {
+    background: var(--card-bg);
+    border: 1px solid var(--paper-line);
+    border-radius: 10px;
+    box-shadow: var(--shadow);
+    padding: 26px 22px;
+    min-height: 300px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+  }
+  .study-face.back { display: none; text-align: left; justify-content: flex-start; }
+  .study-face.back.show { display: flex; }
+  .study-face.front.hide { display: none; }
+ 
+  .study-front-emoji { font-size: 54px; margin-bottom: 14px; }
+  .study-front-name { font-family: var(--serif); font-size: 24px; margin-bottom: 10px; }
+ 
+  .deck-nav {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin-top: 16px;
+  }
+  .progress {
+    text-align: center;
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--ink-soft);
+    margin-top: 10px;
+  }
+ 
+  footer {
+    text-align: center;
+    font-size: 11px;
+    color: var(--ink-soft);
+    margin-top: 40px;
+    font-family: var(--mono);
+  }
+ 
+  @media (max-width: 400px) {
+    h1 { font-size: 32px; }
+    .specimen h2 { font-size: 22px; }
+  }
+</style>
+</head>
+<body>
+<div class="app">
+ 
+  <header>
+    <div class="eyebrow">Field Guide &amp; Diagnosis Game</div>
+    <h1><span class="leaf">🌿</span> Hortle</h1>
+    <div class="tagline">Diagnose it. Treat it. Learn it.</div>
+  </header>
+ 
+  <nav class="tabs">
+    <button class="tab-btn active" id="tab-diagnose" onclick="setMode('diagnose')">Diagnose</button>
+    <button class="tab-btn" id="tab-treat" onclick="setMode('treat')">Treat It</button>
+    <button class="tab-btn" id="tab-study" onclick="setMode('study')">Study Deck</button>
+  </nav>
+ 
+  <!-- DIAGNOSE MODE -->
+  <section class="panel active" id="panel-diagnose">
+ 
+    <div class="clue-card">
+      <div class="clue-label">Case notes</div>
+      <div class="clue-text" id="clue-text">Loading a case…</div>
+      <div class="clue-text clue-two" id="clue-two"></div>
+      <button class="btn ghost small" id="clue-btn" onclick="revealSecondClue()">Need a second clue?</button>
+    </div>
+ 
+    <div id="status-line">&nbsp;</div>
+    <div id="game-row">
+      <div id="grid-wrap"></div>
+      <div id="attempts-side">
+        <div class="attempts-num" id="attempts-num">5</div>
+        <div class="attempts-label">attempts<br>left</div>
+      </div>
+    </div>
+ 
+    <div class="keyboard" id="keyboard"></div>
+ 
+    <div class="controls-row">
+      <button class="btn submit-btn" id="submit-diagnosis-btn" onclick="submitGuess()">Submit diagnosis</button>
+    </div>
+ 
+    <div class="controls-row">
+      <button class="btn ghost" onclick="giveUp()">Reveal specimen</button>
+      <button class="btn" id="next-btn" onclick="nextCase()" style="display:none;">Next case →</button>
+    </div>
+ 
+    <div class="stats-line" id="stats-line">Diagnosed: 0 · Current streak: 0</div>
+ 
+    <div id="reveal-wrap"></div>
+  </section>
+ 
+  <!-- TREAT IT MODE -->
+  <section class="panel" id="panel-treat">
+ 
+    <div class="clue-card" id="treat-card">
+      <div class="clue-label">Patient file</div>
+      <div class="chip" id="treat-chip">PEST</div>
+      <h2 id="treat-name" class="treat-name"></h2>
+      <div class="clue-text" id="treat-symptoms"></div>
+    </div>
+ 
+    <div class="treat-question" id="treat-question">Which treatments would you use?</div>
+    <div id="treat-options"></div>
+ 
+    <div id="treat-feedback" class="treat-feedback"></div>
+ 
+    <div class="controls-row">
+      <button class="btn submit-btn" id="treat-submit-btn" onclick="submitTreatment()">Submit treatment plan</button>
+      <button class="btn ghost" id="treat-next-btn" style="display:none;" onclick="nextTreatmentCase()">Next patient →</button>
+    </div>
+ 
+    <div class="stats-line" id="treat-stats-line">Plans attempted: 0 · Spot-on: 0</div>
+  </section>
+ 
+  <!-- STUDY MODE -->
+  <section class="panel" id="panel-study">
+ 
+    <div class="filter-row" id="filter-row"></div>
+ 
+    <div class="study-card-wrap">
+      <div class="study-card" id="study-card" onclick="flipStudy()">
+        <div class="study-face front" id="study-front">
+          <div class="chip" id="study-front-chip">PEST</div>
+          <div class="study-front-emoji" id="study-front-emoji">🐛</div>
+          <div class="study-front-name" id="study-front-name">Name</div>
+          <div class="flip-hint">Tap the card to reveal treatment</div>
+        </div>
+        <div class="study-face back" id="study-back"></div>
+      </div>
+    </div>
+ 
+    <div class="deck-nav">
+      <button class="btn ghost" onclick="studyPrev()">← Prev</button>
+      <button class="btn ghost" onclick="studyShuffle()">Shuffle</button>
+      <button class="btn" onclick="studyNext()">Next →</button>
+    </div>
+    <div class="progress" id="study-progress">Card 1 of 1</div>
+  </section>
+ 
+  <footer>Built for learning · session progress resets on reload</footer>
+</div>
+ 
+<script>
+/* ---------------- DATA ---------------- */
+const DATA = [
+  {name:"Aphids", guess:"APHIDS", category:"pest", emoji:"🐛",
+    clue:"Sticky honeydew coats the leaves, and ants are suddenly very interested in your roses.",
+    symptoms:"Curled, distorted, sticky new growth; clusters of small soft insects on shoot tips; black sooty mould growing on the honeydew.",
+    cause:"Sap-sucking insects that multiply rapidly on tender new growth, often worse where nitrogen levels are high.",
+    treatment:"Blast colonies off with a jet of water, apply insecticidal soap or neem oil, or release/encourage ladybirds and lacewings.",
+    prevention:"Avoid over-fertilising with nitrogen, inspect new growth regularly, and maintain habitat for predator insects.",
+    actions:["Blast colonies off with a jet of water", "Apply insecticidal soap or neem oil", "Encourage ladybirds and lacewings"]},
+  {name:"Spider mites", guess:"SPIDERMITES", category:"pest", emoji:"🕷️",
+    clue:"Leaves look dusty and speckled, with faint silk threads strung between the stems.",
+    symptoms:"Fine pale stippling or speckling across leaves, bronzing or yellowing foliage, and delicate webbing in bad infestations.",
+    cause:"Tiny sap-feeding mites that thrive in hot, dry, dusty conditions.",
+    treatment:"Increase humidity, hose down foliage regularly, and apply insecticidal soap or a registered miticide.",
+    prevention:"Keep plants well watered in heat, avoid dusty conditions, and check undersides of leaves often.",
+    actions:["Increase humidity around the plant", "Hose down foliage regularly", "Apply insecticidal soap or a miticide"]},
+  {name:"Whitefly", guess:"WHITEFLY", category:"pest", emoji:"🦟",
+    clue:"Tap the leaf and a tiny white cloud lifts off like dust.",
+    symptoms:"Clouds of small white flying insects disturbed when foliage is touched, sticky leaves, sooty mould.",
+    cause:"Sap-sucking insects that congregate on the undersides of leaves, especially in warm, sheltered conditions.",
+    treatment:"Use yellow sticky traps, apply insecticidal soap, and encourage parasitic wasps for biological control.",
+    prevention:"Inspect new plants before introducing them, remove heavily infested leaves early, and avoid overcrowding.",
+    actions:["Use yellow sticky traps", "Apply insecticidal soap", "Encourage parasitic wasps"]},
+  {name:"Thrips", guess:"THRIPS", category:"pest", emoji:"🪰",
+    clue:"Petals look silvered and streaky, as if scratched with a pin.",
+    symptoms:"Silvery streaks or fine speckling on leaves and petals, distorted or discoloured flowers, tiny dark specks of frass.",
+    cause:"Slender, fast-moving insects that rasp at plant surfaces to feed on cell contents.",
+    treatment:"Use blue sticky traps, remove and dispose of affected blooms, introduce predatory mites, or apply spinosad.",
+    prevention:"Keep weeds down nearby, avoid over-fertilising, and monitor flowers regularly during warm months.",
+    actions:["Use blue sticky traps", "Remove and dispose of affected blooms", "Introduce predatory mites or apply spinosad"]},
+  {name:"Mealybugs", guess:"MEALYBUGS", category:"pest", emoji:"🐞",
+    clue:"Little tufts of white cotton wool cling to the stem joints.",
+    symptoms:"White, cottony, waxy masses clustered in leaf axils, along stems, and on root crowns; sticky residue and weak growth.",
+    cause:"Soft-bodied sap-sucking insects that shelter in tight plant crevices under a protective waxy coating.",
+    treatment:"Dab colonies with an alcohol-soaked cotton bud, apply insecticidal soap, or use horticultural oil for heavier infestations.",
+    prevention:"Quarantine and inspect new plants, avoid overwatering and overcrowding, and check crevices regularly.",
+    actions:["Dab bugs with an alcohol-soaked cotton bud", "Apply insecticidal soap", "Use horticultural oil for heavy infestations"]},
+  {name:"Scale insects", guess:"SCALE", category:"pest", emoji:"🛡️",
+    clue:"Odd little bumps on the stem don't brush off like ordinary dirt should.",
+    symptoms:"Small brown, grey or waxy bumps fixed to stems and leaf undersides, sticky honeydew, sooty mould, weakened growth.",
+    cause:"Sap-sucking insects that settle in one place and form a protective shell over themselves.",
+    treatment:"Scrape or brush off light infestations, apply horticultural oil to smother them, or use a systemic insecticide for severe cases.",
+    prevention:"Inspect new plants closely, prune out heavily infested stems, and keep plants unstressed and well cared for.",
+    actions:["Scrape or brush off light infestations", "Apply horticultural oil", "Use a systemic insecticide for severe cases"]},
+  {name:"Slugs and snails", guess:"SLUGS", category:"pest", emoji:"🐌",
+    clue:"Something ate your seedlings down to stubs overnight, leaving a silvery trail behind.",
+    symptoms:"Irregular ragged holes in leaves, seedlings disappearing entirely, and glistening slime trails across soil and foliage.",
+    cause:"Molluscs that feed at night or in damp, humid weather, sheltering under mulch or debris by day.",
+    treatment:"Set beer traps, apply copper tape around pots, hand-pick after dark, or use iron phosphate-based baits.",
+    prevention:"Remove daytime hiding spots, water in the morning rather than evening, and protect seedlings with barriers.",
+    actions:["Set beer traps", "Apply copper tape around pots", "Use iron phosphate-based baits"]},
+  {name:"Cutworms", guess:"CUTWORMS", category:"pest", emoji:"🐛",
+    clue:"A healthy seedling is found toppled over, its stem neatly severed right at ground level.",
+    symptoms:"Young seedlings and transplants cut clean through near the soil line overnight, with the plant left lying beside the stump.",
+    cause:"Fat, grey-brown caterpillars that curl up in soil by day and feed on stems at night.",
+    treatment:"Fit cardboard or foil collars around stems, hand-pick caterpillars found near damaged plants at night, or apply beneficial nematodes.",
+    prevention:"Cultivate soil before planting to expose larvae, keep beds free of weeds, and use collars on new transplants.",
+    actions:["Fit cardboard or foil collars around stems", "Hand-pick caterpillars at night", "Apply beneficial nematodes to the soil"]},
+  {name:"Japanese beetles", guess:"BEETLES", category:"pest", emoji:"🪲",
+    clue:"Leaves look lacy, as though only the veins were left behind after a very fussy meal.",
+    symptoms:"Leaves skeletonised between the veins, chewed flower petals, and metallic green-bronze beetles feeding in clusters.",
+    cause:"Adult beetles feeding in groups on foliage and flowers, with grubs damaging lawn roots earlier in their life cycle.",
+    treatment:"Hand-pick beetles into soapy water in the early morning, use row covers during peak season, and treat lawn grubs with milky spore.",
+    prevention:"Avoid pheromone traps near vulnerable plants (they can attract more beetles in), and keep lawns healthy to discourage grubs.",
+    actions:["Hand-pick beetles into soapy water", "Use row covers during peak season", "Treat lawn grubs with milky spore"]},
+  {name:"Leaf miners", guess:"LEAFMINERS", category:"pest", emoji:"🍃",
+    clue:"Squiggly pale tunnels wander through the leaf, like a tiny hand-drawn maze.",
+    symptoms:"Winding, pale, papery tunnels within the leaf tissue itself, sometimes with a small larva visible inside.",
+    cause:"Larvae of small flies or moths that feed between the upper and lower leaf surfaces.",
+    treatment:"Remove and destroy mined leaves promptly, use floating row covers to prevent egg-laying, and encourage parasitic wasps.",
+    prevention:"Rotate susceptible crops, remove affected leaves as soon as tunnels appear, and keep row covers on during egg-laying periods.",
+    actions:["Remove and destroy mined leaves", "Use floating row covers", "Encourage parasitic wasps"]},
+  {name:"Powdery mildew", guess:"MILDEW", category:"disease", emoji:"🍄",
+    clue:"Leaves look dusted in flour, even though it isn't baking day.",
+    symptoms:"A white to greyish powdery coating across leaf surfaces, stems and sometimes flowers, often starting on older leaves.",
+    cause:"A fungus that thrives in warm days, cool nights, and poor air circulation, spreading easily by airborne spores.",
+    treatment:"Improve airflow by spacing and pruning, remove badly affected leaves, and apply sulfur or potassium bicarbonate spray.",
+    prevention:"Choose resistant varieties, avoid overhead watering, and prune to keep foliage open and airy.",
+    actions:["Improve airflow through pruning and spacing", "Remove affected leaves", "Apply sulfur or potassium bicarbonate spray"]},
+  {name:"Downy mildew", guess:"DOWNYMILDEW", category:"disease", emoji:"🌫️",
+    clue:"The top of the leaf looks yellow-blotched; flip it over and there's a grey fuzz waiting.",
+    symptoms:"Yellow, angular patches on the upper leaf surface with a corresponding greyish-purple fuzzy growth underneath.",
+    cause:"A water-mould pathogen that spreads fastest in cool, humid, wet conditions.",
+    treatment:"Improve airflow and drainage, remove and destroy infected foliage, and apply a copper-based fungicide.",
+    prevention:"Water at the base rather than overhead, space plants for airflow, and avoid working in wet foliage.",
+    actions:["Improve airflow and drainage", "Remove and destroy infected foliage", "Apply a copper-based fungicide"]},
+  {name:"Black spot", guess:"BLACKSPOT", category:"disease", emoji:"⚫",
+    clue:"Round black blotches ring themselves in yellow before the leaf finally gives up and drops.",
+    symptoms:"Circular black spots with fringed edges, often haloed in yellow, followed by premature leaf drop.",
+    cause:"A fungus that splashes up from soil or spreads between wet leaves, especially common on roses.",
+    treatment:"Remove and dispose of fallen and infected leaves, improve airflow through pruning, and apply a suitable fungicide.",
+    prevention:"Water at soil level, avoid wetting foliage, and clear fallen leaves at the end of the season.",
+    actions:["Remove and dispose of fallen leaves", "Improve airflow through pruning", "Apply a suitable fungicide"]},
+  {name:"Botrytis / grey mould", guess:"BOTRYTIS", category:"disease", emoji:"🌁",
+    clue:"A soft grey fuzz appears on a flower after a cold, damp week.",
+    symptoms:"Fuzzy grey-brown mould developing on flowers, soft fruit, or damaged stems, usually after cool, humid weather.",
+    cause:"A fungus that colonises damaged, dying or overly damp plant tissue and spreads rapidly in still, humid air.",
+    treatment:"Remove affected flowers and stems promptly, improve ventilation, avoid overhead watering, and apply fungicide if needed.",
+    prevention:"Deadhead spent blooms, avoid overcrowding, and water in the morning so foliage dries during the day.",
+    actions:["Remove affected flowers and stems", "Improve ventilation", "Avoid overhead watering"]},
+  {name:"Fire blight", guess:"FIREBLIGHT", category:"disease", emoji:"🔥",
+    clue:"Branch tips look scorched and curl over like a shepherd's crook, though there was no fire at all.",
+    symptoms:"Blackened, blighted shoot tips that curl into a hook shape, as if burnt, often oozing in wet weather.",
+    cause:"A bacterial infection that enters through blossoms or wounds and spreads through susceptible pome fruit trees.",
+    treatment:"Prune well below the infection using sterilised tools between cuts, and avoid heavy nitrogen fertilising that encourages soft growth.",
+    prevention:"Choose resistant varieties, avoid pruning in wet weather, and sterilise tools between plants.",
+    actions:["Prune well below the infection", "Sterilise tools between cuts", "Avoid heavy nitrogen fertilising"]},
+  {name:"Verticillium wilt", guess:"VERTICILLIUM", category:"disease", emoji:"🥀",
+    clue:"Only one side of the plant wilts, and a stem cut open shows a telltale brown streak inside.",
+    symptoms:"One-sided wilting and yellowing of leaves, with brown vascular streaking visible when a stem is cut lengthwise.",
+    cause:"A soil-borne fungus that blocks a plant's water-conducting tissue from within.",
+    treatment:"Remove and destroy infected plants, solarise the soil where practical, and replant with resistant varieties.",
+    prevention:"Rotate crops, avoid replanting susceptible species in the same spot, and keep plants unstressed.",
+    actions:["Remove and destroy infected plants", "Solarise the soil", "Replant with resistant varieties"]},
+  {name:"Clubroot", guess:"CLUBROOT", category:"disease", emoji:"🥬",
+    clue:"Pull up a wilting cabbage and the roots have swollen into strange, gnarled clubs.",
+    symptoms:"Stunted, wilting brassicas with roots that are swollen, distorted and club-like instead of fine and fibrous.",
+    cause:"A soil-borne slime mould that infects brassica roots and persists in soil for many years.",
+    treatment:"Raise soil pH with lime, improve drainage, and avoid planting brassicas in the same bed for several years.",
+    prevention:"Rotate brassica crops on a long cycle, maintain a higher soil pH, and disinfect tools between beds.",
+    actions:["Raise soil pH with lime", "Improve drainage", "Avoid planting brassicas in the same bed for years"]},
+  {name:"Rust", guess:"RUST", category:"disease", emoji:"🟠",
+    clue:"The underside of the leaf looks dusted in fine orange powder.",
+    symptoms:"Orange-brown pustules erupting on the undersides of leaves, sometimes with yellow spotting on top.",
+    cause:"A fungus that produces airborne spores, spreading fastest in humid conditions with wet foliage.",
+    treatment:"Remove and destroy infected leaves, improve airflow, and apply a suitable fungicide if the spread is significant.",
+    prevention:"Choose resistant varieties, water at the base, and avoid overcrowding plants.",
+    actions:["Remove and destroy infected leaves", "Improve airflow", "Apply a suitable fungicide"]},
+  {name:"Bacterial wilt", guess:"BACTERIALWILT", category:"disease", emoji:"💧",
+    clue:"The plant collapses overnight even though the soil is damp; cut the stem and it oozes a milky sap.",
+    symptoms:"Sudden, irreversible wilting despite adequate soil moisture, with cut stems oozing a sticky, milky ooze.",
+    cause:"Bacteria that block the plant's vascular system, often spread by insect vectors such as cucumber beetles.",
+    treatment:"Remove and destroy infected plants immediately; there is no cure once a plant is infected, so control the insect vector.",
+    prevention:"Control cucumber beetles and other vectors early, and use row covers on young susceptible plants.",
+    actions:["Remove and destroy infected plants immediately", "Control cucumber beetle vectors", "Use row covers on young plants"]},
+  {name:"Root rot", guess:"ROOTROT", category:"disease", emoji:"🪱",
+    clue:"Roots that should be firm and pale are brown, mushy, and smell distinctly foul.",
+    symptoms:"Wilting and yellowing despite consistently wet soil, with roots that are dark, soft, and unpleasant-smelling when checked.",
+    cause:"Fungal or water-mould pathogens that thrive in waterlogged, poorly-drained, oxygen-starved soil.",
+    treatment:"Improve drainage, cut back watering, trim away affected roots, and apply a fungicide drench for valuable plants.",
+    prevention:"Use free-draining potting mix, avoid overwatering, and ensure pots and beds drain freely.",
+    actions:["Improve drainage", "Cut back on watering", "Trim away affected roots"]},
+  {name:"Blossom end rot", guess:"BLOSSOMENDROT", category:"disorder", emoji:"🍅",
+    clue:"The bottom of an otherwise perfect tomato has turned into a dark, leathery, sunken patch.",
+    symptoms:"A sunken, dark, leathery patch developing on the blossom end of tomatoes, peppers, or squash.",
+    cause:"Calcium not reaching the developing fruit, usually caused by inconsistent watering rather than a true calcium shortage.",
+    treatment:"Water consistently and mulch to retain even soil moisture; adding calcium alone rarely fixes the underlying watering issue.",
+    prevention:"Keep watering even and regular, mulch well, and avoid letting soil dry out between waterings.",
+    actions:["Water consistently and evenly", "Mulch to retain soil moisture", "Avoid letting soil dry out between waterings"]},
+  {name:"Iron chlorosis", guess:"CHLOROSIS", category:"disorder", emoji:"🟡",
+    clue:"New leaves turn yellow, but the veins stay stubbornly green.",
+    symptoms:"Yellowing of new leaves while the veins remain green, giving a distinctive net-like pattern.",
+    cause:"Iron becoming unavailable to the plant, most often in alkaline (high pH) soils rather than true iron shortage.",
+    treatment:"Lower soil pH where practical, apply chelated iron as a foliar spray or soil drench, and improve drainage.",
+    prevention:"Test and manage soil pH for the species grown, and avoid over-liming acid-loving plants.",
+    actions:["Lower soil pH where practical", "Apply chelated iron as a foliar spray", "Improve drainage"]},
+  {name:"Sunscald", guess:"SUNSCALD", category:"disorder", emoji:"☀️",
+    clue:"A pale, papery blister appears on the side of the fruit facing the harsh afternoon sun.",
+    symptoms:"Pale, blistered, or bleached patches on fruit or bark on the side facing strong sun, sometimes cracking later.",
+    cause:"Sudden, intense sun exposure on tissue not acclimatised to it, often after pruning removes shade foliage.",
+    treatment:"Use shade cloth over exposed fruit, avoid harsh pruning in peak summer, and paint trunks with diluted white latex to reflect heat.",
+    prevention:"Introduce sun exposure gradually, retain some canopy shade, and protect newly exposed bark or fruit.",
+    actions:["Use shade cloth over exposed fruit", "Avoid harsh pruning in peak summer", "Paint trunks with diluted white latex"]},
+  {name:"Frost damage", guess:"FROSTDAMAGE", category:"disorder", emoji:"❄️",
+    clue:"Overnight the leaves turned black and slumped, right after the temperature plunged.",
+    symptoms:"Blackened, water-soaked, wilted leaves and stems appearing suddenly after a cold snap.",
+    cause:"Ice forming within plant cells, rupturing them, following exposure to freezing temperatures.",
+    treatment:"Avoid pruning damaged growth immediately, water well before hard frosts are forecast, and wait to see what regrows before cutting back.",
+    prevention:"Use frost cloth on cold nights, choose appropriately hardy species, and avoid feeding late in the season.",
+    actions:["Avoid pruning damaged growth immediately", "Water well before hard frosts", "Wait to see what regrows before cutting back"]},
+  {name:"Oedema", guess:"OEDEMA", category:"disorder", emoji:"💦",
+    clue:"Odd corky warts appear on the underside of the leaf, though there's no pest in sight.",
+    symptoms:"Small, corky, wart-like bumps on the undersides of leaves, with no insects or fungal growth present.",
+    cause:"Roots absorbing more water than the leaves can transpire, usually from overwatering combined with low light and still air.",
+    treatment:"Reduce watering frequency, increase light levels and airflow, and avoid letting pots sit waterlogged.",
+    prevention:"Water according to season and light levels, and improve ventilation around susceptible plants.",
+    actions:["Reduce watering frequency", "Increase light levels and airflow", "Avoid letting pots sit waterlogged"]},
+  {name:"Nitrogen deficiency", guess:"NITROGEN", category:"disorder", emoji:"🟢",
+    clue:"The oldest, lowest leaves fade evenly to pale yellow while the whole plant seems to stall.",
+    symptoms:"Uniform pale yellowing starting on older, lower leaves, alongside slow, stunted overall growth.",
+    cause:"Insufficient available nitrogen in the soil for the plant's growth stage.",
+    treatment:"Apply a balanced or nitrogen-rich fertiliser, or work in compost, blood meal, or well-rotted manure.",
+    prevention:"Feed regularly during the growing season and maintain healthy, organic-rich soil.",
+    actions:["Apply a balanced or nitrogen-rich fertiliser", "Work in compost or well-rotted manure", "Feed regularly during the growing season"]},
+  {name:"Magnesium deficiency", guess:"MAGNESIUM", category:"disorder", emoji:"🍂",
+    clue:"Older leaves go yellow between the veins, like a green skeleton left on a pale sheet.",
+    symptoms:"Interveinal yellowing on older leaves first, with the veins themselves staying distinctly green.",
+    cause:"Insufficient magnesium, often worsened in sandy, free-draining or heavily leached soils.",
+    treatment:"Apply an Epsom salt (magnesium sulfate) foliar spray or soil drench to correct the shortage quickly.",
+    prevention:"Feed with a balanced fertiliser containing trace elements and avoid over-liming sandy soils.",
+    actions:["Apply an Epsom salt foliar spray", "Apply a magnesium sulfate soil drench", "Feed with a balanced fertiliser containing trace elements"]},
+  {name:"Overwatering", guess:"OVERWATERING", category:"disorder", emoji:"🚿",
+    clue:"Leaves turn yellow and mushy-soft even though the soil is thoroughly soaked.",
+    symptoms:"Yellowing, soft or wilting leaves despite consistently wet soil, sometimes with a sour smell from the root zone.",
+    cause:"Excess water displacing oxygen in the soil, stressing or suffocating the root system.",
+    treatment:"Allow soil to dry out between waterings, improve drainage, and repot in fresh mix if roots have been affected.",
+    prevention:"Water according to the plant's actual needs and ensure containers and beds drain freely.",
+    actions:["Allow soil to dry out between waterings", "Improve drainage", "Repot in fresh mix if roots are affected"]}
+];
+ 
+const CATEGORY_LABEL = { pest:"Pest", disease:"Disease", disorder:"Disorder" };
+ 
+/* ---------------- STATE ---------------- */
+let diagnoseTarget = null;
+let guesses = [];
+let lockedMask = [];        // per-position letter once guessed correctly, else null
+let currentRowArr = [];     // full-width array for the active row (locked + typed)
+let unlockedIndices = [];   // positions still open for typing, in order
+let inputPtr = 0;           // how many unlocked slots are currently filled
+let maxAttempts = 6;
+let gameOver = false;
+let stats = { solved: 0, streak: 0 };
+let lastTargetName = null;
+ 
+let studyDeck = [...DATA];
+let studyIndex = 0;
+let studyFlipped = false;
+let activeFilters = new Set(["pest","disease","disorder"]);
+ 
+const KB_ROWS = [
+  ["Q","W","E","R","T","Y","U","I","O","P"],
+  ["A","S","D","F","G","H","J","K","L"],
+  ["ENTER","Z","X","C","V","B","N","M","BACK"]
+];
+ 
+/* ---------------- MODE SWITCHING ---------------- */
+function setMode(mode){
+  document.getElementById('panel-diagnose').classList.toggle('active', mode==='diagnose');
+  document.getElementById('panel-treat').classList.toggle('active', mode==='treat');
+  document.getElementById('panel-study').classList.toggle('active', mode==='study');
+  document.getElementById('tab-diagnose').classList.toggle('active', mode==='diagnose');
+  document.getElementById('tab-treat').classList.toggle('active', mode==='treat');
+  document.getElementById('tab-study').classList.toggle('active', mode==='study');
+}
+ 
+/* ---------------- DIAGNOSE MODE ---------------- */
+function pickTarget(){
+  let pool = DATA.filter(d => d.name !== lastTargetName);
+  const t = pool[Math.floor(Math.random()*pool.length)];
+  lastTargetName = t.name;
+  return t;
+}
+ 
+function attemptsForLength(len){
+  return 5;
+}
+ 
+function revealSecondClue(){
+  const clueTwo = document.getElementById('clue-two');
+  clueTwo.textContent = "Likely cause: " + diagnoseTarget.cause;
+  clueTwo.classList.add('show');
+  const btn = document.getElementById('clue-btn');
+  btn.disabled = true;
+  btn.textContent = 'Second clue used';
+}
+ 
+function startCase(){
+  diagnoseTarget = pickTarget();
+  guesses = [];
+  lockedMask = new Array(diagnoseTarget.guess.length).fill(null);
+  maxAttempts = attemptsForLength(diagnoseTarget.guess.length);
+  gameOver = false;
+  prepareNextRow();
+  document.getElementById('clue-text').textContent = diagnoseTarget.clue;
+  const clueTwo = document.getElementById('clue-two');
+  clueTwo.textContent = '';
+  clueTwo.classList.remove('show');
+  const clueBtn = document.getElementById('clue-btn');
+  clueBtn.disabled = false;
+  clueBtn.textContent = 'Need a second clue?';
+  document.getElementById('status-line').innerHTML = "&nbsp;";
+  document.getElementById('next-btn').style.display = 'none';
+  document.getElementById('submit-diagnosis-btn').style.display = 'inline-block';
+  document.getElementById('submit-diagnosis-btn').disabled = false;
+  document.getElementById('reveal-wrap').innerHTML = '';
+  renderGrid();
+  renderKeyboard();
+}
+ 
+function prepareNextRow(){
+  currentRowArr = lockedMask.slice();
+  unlockedIndices = [];
+  for(let i=0; i<currentRowArr.length; i++){
+    if(currentRowArr[i] === null){
+      unlockedIndices.push(i);
+      currentRowArr[i] = '';
+    }
+  }
+  inputPtr = 0;
+}
+ 
+function renderGrid(){
+  const wrap = document.getElementById('grid-wrap');
+  const L = diagnoseTarget.guess.length;
+  const rowsToShow = guesses.length + (gameOver ? 0 : 1);
+  const grid = document.createElement('div');
+  grid.className = 'grid';
+  grid.style.gridTemplateColumns = `repeat(${L}, auto)`;
+  grid.style.gridTemplateRows = `repeat(${rowsToShow}, auto)`;
+ 
+  for(let r=0; r<rowsToShow; r++){
+    const guess = guesses[r];
+    const isCurrentRow = (r === guesses.length && !gameOver);
+    for(let c=0; c<L; c++){
+      const tile = document.createElement('div');
+      tile.className = 'tile';
+      let letter = '';
+      if(guess){
+        letter = guess.word[c];
+        tile.classList.add(guess.result[c]);
+      } else if(isCurrentRow){
+        if(lockedMask[c] !== null){
+          letter = lockedMask[c];
+          tile.classList.add('correct', 'locked');
+        } else if(currentRowArr[c]){
+          letter = currentRowArr[c];
+          tile.classList.add('filled');
+        }
+      }
+      tile.textContent = letter;
+      grid.appendChild(tile);
+    }
+  }
+  wrap.innerHTML = '';
+  wrap.appendChild(grid);
+  updateAttemptsSide();
+}
+ 
+function updateAttemptsSide(){
+  const left = Math.max(0, maxAttempts - guesses.length);
+  const el = document.getElementById('attempts-num');
+  el.textContent = left;
+  el.classList.toggle('low', left <= 1);
+}
+ 
+function renderKeyboard(){
+  const kb = document.getElementById('keyboard');
+  kb.innerHTML = '';
+ 
+  KB_ROWS.forEach(row => {
+    const rowEl = document.createElement('div');
+    rowEl.className = 'kb-row';
+    row.forEach(key => {
+      const btn = document.createElement('div');
+      btn.className = 'key';
+      btn.tabIndex = 0;
+      btn.setAttribute('role','button');
+      if(key==='ENTER' || key==='BACK'){
+        btn.classList.add('wide');
+        btn.textContent = key==='ENTER' ? 'ENTER' : '⌫';
+      } else {
+        btn.textContent = key;
+      }
+      btn.onclick = () => handleKey(key);
+      btn.onkeydown = (e) => { if(e.key==='Enter' || e.key===' ') handleKey(key); };
+      rowEl.appendChild(btn);
+    });
+    kb.appendChild(rowEl);
+  });
+}
+ 
+function handleKey(key){
+  if(gameOver) return;
+  if(key === 'BACK'){
+    if(inputPtr > 0){
+      inputPtr--;
+      currentRowArr[unlockedIndices[inputPtr]] = '';
+    }
+  } else if(key === 'ENTER'){
+    submitGuess();
+    return;
+  } else if(/^[A-Z]$/.test(key)){
+    if(inputPtr < unlockedIndices.length){
+      currentRowArr[unlockedIndices[inputPtr]] = key;
+      inputPtr++;
+    }
+  }
+  renderGrid();
+}
+ 
+function submitGuess(){
+  const L = diagnoseTarget.guess.length;
+  const status = document.getElementById('status-line');
+  if(inputPtr < unlockedIndices.length){
+    status.textContent = "Keep going — the diagnosis needs more letters.";
+    return;
+  }
+  const target = diagnoseTarget.guess;
+  const guessWord = currentRowArr.join('');
+  const guessArr = currentRowArr.slice();
+  const targetArr = target.split('');
+  const result = new Array(L).fill('absent');
+ 
+  const remaining = {};
+  for(let i=0;i<L;i++){
+    if(guessArr[i] === targetArr[i]){
+      result[i] = 'correct';
+    } else {
+      remaining[targetArr[i]] = (remaining[targetArr[i]]||0)+1;
+    }
+  }
+  for(let i=0;i<L;i++){
+    if(result[i] !== 'correct'){
+      const ch = guessArr[i];
+      if(remaining[ch] > 0){
+        result[i] = 'present';
+        remaining[ch]--;
+      }
+    }
+  }
+ 
+  guesses.push({ word: guessWord, result });
+  const won = result.every(r => r === 'correct');
+  for(let i=0;i<L;i++){
+    if(result[i] === 'correct') lockedMask[i] = guessArr[i];
+  }
+ 
+  if(won){
+    gameOver = true;
+    stats.solved++; stats.streak++;
+    status.textContent = "Correctly diagnosed! Here's the full specimen record:";
+    showReveal();
+  } else if(guesses.length >= maxAttempts){
+    gameOver = true;
+    stats.streak = 0;
+    status.textContent = "Out of attempts. Here's what it actually was:";
+    showReveal();
+  } else {
+    prepareNextRow();
+    status.textContent = `Attempt ${guesses.length} of ${maxAttempts} logged.`;
+  }
+  renderGrid();
+  renderKeyboard();
+  updateStatsLine();
+  if(gameOver){
+    document.getElementById('next-btn').style.display = 'inline-block';
+    document.getElementById('submit-diagnosis-btn').style.display = 'none';
+  }
+}
+ 
+function giveUp(){
+  if(gameOver) return;
+  gameOver = true;
+  stats.streak = 0;
+  document.getElementById('status-line').textContent = "Revealed — here's the specimen record:";
+  showReveal();
+  renderKeyboard();
+  document.getElementById('next-btn').style.display = 'inline-block';
+  document.getElementById('submit-diagnosis-btn').style.display = 'none';
+}
+ 
+function updateStatsLine(){
+  document.getElementById('stats-line').textContent =
+    `Diagnosed: ${stats.solved} · Current streak: ${stats.streak}`;
+}
+ 
+function specimenHTML(d, idNum){
+  return `
+    <div class="specimen">
+      <div class="catalog-id">No. ${String(idNum).padStart(2,'0')}</div>
+      <div class="chip ${d.category}" style="margin-bottom:8px;">${CATEGORY_LABEL[d.category]}</div>
+      <h2><span class="emoji-tag">${d.emoji}</span>${d.name}</h2>
+      <div class="field">
+        <div class="flabel">Symptoms</div>
+        <div class="fbody">${d.symptoms}</div>
+      </div>
+      <div class="field">
+        <div class="flabel">Cause</div>
+        <div class="fbody">${d.cause}</div>
+      </div>
+      <hr class="dash">
+      <div class="field">
+        <div class="flabel">Treatment</div>
+        <div class="fbody">${d.treatment}</div>
+      </div>
+      <div class="field">
+        <div class="flabel">Prevention</div>
+        <div class="fbody">${d.prevention}</div>
+      </div>
+    </div>
+  `;
+}
+ 
+function showReveal(){
+  document.getElementById('clue-btn').disabled = true;
+  const idNum = DATA.findIndex(d => d.name === diagnoseTarget.name) + 1;
+  document.getElementById('reveal-wrap').innerHTML = specimenHTML(diagnoseTarget, idNum);
+}
+ 
+/* ---------------- TREAT IT MODE ---------------- */
+let treatTarget = null;
+let treatOptions = [];       // [{text, correct}]
+let treatSelected = new Set();
+let treatSubmitted = false;
+let lastTreatName = null;
+let treatStats = { attempts: 0, perfect: 0 };
+ 
+function pickTreatTarget(){
+  let pool = DATA.filter(d => d.name !== lastTreatName);
+  const t = pool[Math.floor(Math.random()*pool.length)];
+  lastTreatName = t.name;
+  return t;
+}
+ 
+function startTreatCase(){
+  treatTarget = pickTreatTarget();
+  treatSelected = new Set();
+  treatSubmitted = false;
+ 
+  const correctActions = treatTarget.actions.map(text => ({text, correct:true}));
+  const otherActionsPool = [];
+  DATA.forEach(d => {
+    if(d.name !== treatTarget.name){
+      d.actions.forEach(text => otherActionsPool.push(text));
+    }
+  });
+  // shuffle distractor pool and take 3 unique distractors
+  for(let i=otherActionsPool.length-1;i>0;i--){
+    const j = Math.floor(Math.random()*(i+1));
+    [otherActionsPool[i], otherActionsPool[j]] = [otherActionsPool[j], otherActionsPool[i]];
+  }
+  const distractors = otherActionsPool.slice(0,3).map(text => ({text, correct:false}));
+ 
+  treatOptions = [...correctActions, ...distractors];
+  for(let i=treatOptions.length-1;i>0;i--){
+    const j = Math.floor(Math.random()*(i+1));
+    [treatOptions[i], treatOptions[j]] = [treatOptions[j], treatOptions[i]];
+  }
+ 
+  document.getElementById('treat-chip').className = `chip ${treatTarget.category}`;
+  document.getElementById('treat-chip').textContent = CATEGORY_LABEL[treatTarget.category];
+  document.getElementById('treat-name').textContent = `${treatTarget.emoji} ${treatTarget.name}`;
+  document.getElementById('treat-symptoms').textContent = treatTarget.symptoms;
+  const n = treatTarget.actions.length;
+  document.getElementById('treat-question').textContent =
+    `Select the ${n} treatments you'd use for this case.`;
+  document.getElementById('treat-feedback').textContent = '';
+  document.getElementById('treat-submit-btn').style.display = 'inline-block';
+  document.getElementById('treat-submit-btn').disabled = false;
+  document.getElementById('treat-next-btn').style.display = 'none';
+  renderTreatOptions();
+}
+ 
+function renderTreatOptions(){
+  const wrap = document.getElementById('treat-options');
+  wrap.innerHTML = '';
+  treatOptions.forEach((opt, idx) => {
+    const row = document.createElement('div');
+    row.className = 'treat-option';
+    if(treatSelected.has(idx)) row.classList.add('selected');
+ 
+    if(treatSubmitted){
+      row.classList.add('locked');
+      if(opt.correct && treatSelected.has(idx)) row.classList.add('result-correct');
+      else if(opt.correct && !treatSelected.has(idx)) row.classList.add('result-missed');
+      else if(!opt.correct && treatSelected.has(idx)) row.classList.add('result-wrong');
+      else row.classList.add('result-neutral');
+    }
+ 
+    const box = document.createElement('div');
+    box.className = 'box';
+    if(treatSubmitted){
+      if(opt.correct && treatSelected.has(idx)) box.textContent = '✓';
+      else if(opt.correct && !treatSelected.has(idx)) box.textContent = '!';
+      else if(!opt.correct && treatSelected.has(idx)) box.textContent = '✕';
+    } else if(treatSelected.has(idx)){
+      box.textContent = '✓';
+    }
+ 
+    const textWrap = document.createElement('div');
+    textWrap.innerHTML = opt.text;
+    if(treatSubmitted){
+      const tag = document.createElement('span');
+      tag.className = 'treat-tag';
+      if(opt.correct && treatSelected.has(idx)) tag.textContent = 'Correct choice';
+      else if(opt.correct && !treatSelected.has(idx)) tag.textContent = 'Missed — this helps too';
+      else if(!opt.correct && treatSelected.has(idx)) tag.textContent = "Not for this case";
+      textWrap.appendChild(tag);
+    }
+ 
+    row.appendChild(box);
+    row.appendChild(textWrap);
+ 
+    if(!treatSubmitted){
+      row.onclick = () => toggleTreatOption(idx);
+      row.tabIndex = 0;
+      row.setAttribute('role','checkbox');
+      row.onkeydown = (e) => { if(e.key==='Enter' || e.key===' ') toggleTreatOption(idx); };
+    }
+    wrap.appendChild(row);
+  });
+}
+ 
+function toggleTreatOption(idx){
+  if(treatSubmitted) return;
+  const n = treatTarget.actions.length;
+  if(treatSelected.has(idx)){
+    treatSelected.delete(idx);
+    document.getElementById('treat-feedback').textContent = '';
+  } else {
+    if(treatSelected.size >= n){
+      document.getElementById('treat-feedback').textContent =
+        `You've already picked ${n} — deselect one first if you'd like to change your answer.`;
+      return;
+    }
+    treatSelected.add(idx);
+    document.getElementById('treat-feedback').textContent = '';
+  }
+  renderTreatOptions();
+}
+ 
+function submitTreatment(){
+  if(treatSubmitted) return;
+  const n = treatTarget.actions.length;
+  if(treatSelected.size < n){
+    document.getElementById('treat-feedback').textContent =
+      `Select ${n - treatSelected.size} more treatment${n - treatSelected.size === 1 ? '' : 's'} before submitting.`;
+    return;
+  }
+  treatSubmitted = true;
+ 
+  const totalCorrect = treatOptions.filter(o => o.correct).length;
+  let correctlySelected = 0;
+  let wronglySelected = 0;
+  treatOptions.forEach((opt, idx) => {
+    if(opt.correct && treatSelected.has(idx)) correctlySelected++;
+    if(!opt.correct && treatSelected.has(idx)) wronglySelected++;
+  });
+ 
+  const perfect = (correctlySelected === totalCorrect && wronglySelected === 0);
+  treatStats.attempts++;
+  if(perfect) treatStats.perfect++;
+ 
+  const feedback = document.getElementById('treat-feedback');
+  if(perfect){
+    feedback.textContent = `Spot on — all ${totalCorrect} correct treatments selected.`;
+  } else {
+    feedback.textContent = `${correctlySelected} of ${totalCorrect} correct treatments selected` +
+      (wronglySelected > 0 ? `, ${wronglySelected} that wouldn't help.` : '.');
+  }
+ 
+  document.getElementById('treat-submit-btn').style.display = 'none';
+  document.getElementById('treat-next-btn').style.display = 'inline-block';
+  document.getElementById('treat-stats-line').textContent =
+    `Plans attempted: ${treatStats.attempts} · Spot-on: ${treatStats.perfect}`;
+  renderTreatOptions();
+}
+ 
+function nextTreatmentCase(){
+  startTreatCase();
+}
+ 
+function nextCase(){
+  startCase();
+}
+ 
+/* physical keyboard support */
+document.addEventListener('keydown', (e) => {
+  if(!document.getElementById('panel-diagnose').classList.contains('active')) return;
+  if(gameOver) return;
+  const k = e.key.toUpperCase();
+  if(k === 'ENTER') handleKey('ENTER');
+  else if(k === 'BACKSPACE') handleKey('BACK');
+  else if(/^[A-Z]$/.test(k)) handleKey(k);
+});
+ 
+/* ---------------- STUDY MODE ---------------- */
+function renderFilters(){
+  const row = document.getElementById('filter-row');
+  row.innerHTML = '';
+  const defs = [
+    {key:'all', label:'All'},
+    {key:'pest', label:'Pests'},
+    {key:'disease', label:'Diseases'},
+    {key:'disorder', label:'Disorders'}
+  ];
+  defs.forEach(def => {
+    const chip = document.createElement('div');
+    chip.className = 'filter-chip';
+    chip.textContent = def.label;
+    chip.tabIndex = 0;
+    chip.setAttribute('role','button');
+    const isOn = def.key==='all'
+      ? activeFilters.size===3
+      : activeFilters.has(def.key);
+    if(isOn) chip.classList.add('on', def.key);
+    chip.onclick = () => toggleFilter(def.key);
+    row.appendChild(chip);
+  });
+}
+ 
+function toggleFilter(key){
+  if(key==='all'){
+    activeFilters = new Set(['pest','disease','disorder']);
+  } else {
+    if(activeFilters.has(key) && activeFilters.size>1){
+      activeFilters.delete(key);
+    } else {
+      activeFilters.add(key);
+    }
+  }
+  rebuildDeck();
+  renderFilters();
+}
+ 
+function rebuildDeck(){
+  studyDeck = DATA.filter(d => activeFilters.has(d.category));
+  studyIndex = 0;
+  studyFlipped = false;
+  renderStudyCard();
+}
+ 
+function renderStudyCard(){
+  if(studyDeck.length === 0){
+    document.getElementById('study-progress').textContent = "No cards match this filter.";
+    return;
+  }
+  const d = studyDeck[studyIndex];
+  const idNum = DATA.findIndex(x => x.name === d.name) + 1;
+ 
+  document.getElementById('study-front-chip').className = `chip ${d.category}`;
+  document.getElementById('study-front-chip').textContent = CATEGORY_LABEL[d.category];
+  document.getElementById('study-front-emoji').textContent = d.emoji;
+  document.getElementById('study-front-name').textContent = d.name;
+ 
+  document.getElementById('study-back').innerHTML = specimenHTML(d, idNum);
+ 
+  document.getElementById('study-front').classList.toggle('hide', studyFlipped);
+  document.getElementById('study-back').classList.toggle('show', studyFlipped);
+ 
+  document.getElementById('study-progress').textContent =
+    `Card ${studyIndex+1} of ${studyDeck.length}`;
+}
+ 
+function flipStudy(){
+  studyFlipped = !studyFlipped;
+  renderStudyCard();
+}
+ 
+function studyNext(){
+  if(studyDeck.length===0) return;
+  studyIndex = (studyIndex+1) % studyDeck.length;
+  studyFlipped = false;
+  renderStudyCard();
+}
+function studyPrev(){
+  if(studyDeck.length===0) return;
+  studyIndex = (studyIndex-1+studyDeck.length) % studyDeck.length;
+  studyFlipped = false;
+  renderStudyCard();
+}
+function studyShuffle(){
+  for(let i=studyDeck.length-1;i>0;i--){
+    const j = Math.floor(Math.random()*(i+1));
+    [studyDeck[i], studyDeck[j]] = [studyDeck[j], studyDeck[i]];
+  }
+  studyIndex = 0;
+  studyFlipped = false;
+  renderStudyCard();
+}
+ 
+/* ---------------- INIT ---------------- */
+startCase();
+updateStatsLine();
+startTreatCase();
+renderFilters();
+rebuildDeck();
+</script>
+</body>
+</html>
+ 
