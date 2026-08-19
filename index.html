@@ -278,16 +278,25 @@
         display: flex;
         flex-direction: column;
         align-items: center;
-        gap: 6px;
+        gap: 4px;
         width: 100%;
       }
       .word-group {
         display: flex;
+        flex-wrap: wrap;
         justify-content: center;
         gap: 6px;
+        row-gap: 4px;
         max-width: 100%;
-        overflow-x: auto;
-        padding-bottom: 2px;
+      }
+      .attempt.single-word .word-group {
+        justify-content: flex-start;
+      }
+      .word-group + .word-group {
+        margin-top: 10px;
+        padding-top: 10px;
+        border-top: 1px dashed var(--paper-line);
+        width: 100%;
       }
       .tile {
         width: clamp(24px, 7vw, 40px);
@@ -1084,8 +1093,8 @@
           ],
         },
         {
-          name: "Japanese beetles",
-          guess: "BEETLES",
+          name: "Skeletonisation",
+          guess: "SKELETONISATION",
           category: "pest",
           emoji: "🪲",
           clue: "Leaves look lacy, as though only the veins were left behind after a very fussy meal.",
@@ -1528,7 +1537,15 @@
       }
 
       /* ---------------- DIAGNOSE MODE ---------------- */
+      let firstCase = false; // TEMP: forces Skeletonisation on first load for testing
+
       function pickTarget() {
+        if (firstCase) {
+          firstCase = false;
+          const t = DATA.find((d) => !!d.firstCase);
+          lastTargetName = t.name;
+          return t;
+        }
         let pool = DATA.filter((d) => d.name !== lastTargetName);
         const t = pool[Math.floor(Math.random() * pool.length)];
         lastTargetName = t.name;
@@ -1601,6 +1618,7 @@
           const isRevealRow = r === guesses.length && showRevealRow;
           const rowEl = document.createElement("div");
           rowEl.className = "attempt";
+          if (wordLens.length === 1) rowEl.classList.add("single-word");
           if (isRevealRow) rowEl.classList.add("reveal-row");
 
           let c = 0;
