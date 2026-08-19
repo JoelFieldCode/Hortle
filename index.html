@@ -1548,15 +1548,7 @@
       }
 
       /* ---------------- DIAGNOSE MODE ---------------- */
-      let firstCase = true; // TEMP: forces a two-word answer on first load for testing
-
       function pickTarget() {
-        if (firstCase) {
-          firstCase = false;
-          const t = DATA.find((d) => d.name === "Nitrogen deficiency");
-          lastTargetName = t.name;
-          return t;
-        }
         let pool = DATA.filter((d) => d.name !== lastTargetName);
         const t = pool[Math.floor(Math.random() * pool.length)];
         lastTargetName = t.name;
