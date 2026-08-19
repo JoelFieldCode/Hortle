@@ -1433,7 +1433,8 @@
         },
         {
           name: "Nitrogen deficiency",
-          guess: "NITROGEN",
+          guess: "NITROGENDEFICIENCY",
+          wordLens: [8, 10],
           category: "disorder",
           emoji: "🟢",
           clue: "The oldest, lowest leaves fade evenly to pale yellow while the whole plant seems to stall.",
@@ -1453,7 +1454,8 @@
         },
         {
           name: "Magnesium deficiency",
-          guess: "MAGNESIUM",
+          guess: "MAGNESIUMDEFICIENCY",
+          wordLens: [9, 10],
           category: "disorder",
           emoji: "🍂",
           clue: "Older leaves go yellow between the veins, like a green skeleton left on a pale sheet.",
@@ -1551,7 +1553,7 @@
       function pickTarget() {
         if (firstCase) {
           firstCase = false;
-          const t = DATA.find((d) => d.name === "Downy mildew");
+          const t = DATA.find((d) => d.name === "Nitrogen deficiency");
           lastTargetName = t.name;
           return t;
         }
