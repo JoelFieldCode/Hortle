@@ -129,7 +129,7 @@ export function DiagnoseProvider({ children }: { children: ReactNode }) {
       setStatus("Out of attempts. Here's what it actually was:");
     } else {
       setRow(prepareRow(nextMask));
-      setStatus(`Attempt ${nextGuesses.length} of ${MAX_ATTEMPTS} logged.`);
+      setStatus("");
     }
 
     return true;

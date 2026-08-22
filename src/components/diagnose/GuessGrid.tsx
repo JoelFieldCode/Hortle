@@ -110,24 +110,41 @@ export function GuessGrid() {
     useDiagnose();
   const wordLens = target.wordLens ?? [target.guess.length];
   const showRevealRow = gameOver && !gameWon;
-  const rowsToShow = guesses.length + (gameOver ? (showRevealRow ? 1 : 0) : 1);
+  const lastGuess = guesses[guesses.length - 1];
+  const textGuesses = gameWon ? guesses.slice(0, -1) : guesses;
 
   return (
     <div className="mb-[18px] flex flex-col items-center justify-center gap-[18px] md:flex-row">
       <div className="flex w-full justify-center">
         <div className="flex w-full flex-col items-center gap-3.5">
-          {Array.from({ length: rowsToShow }, (_, r) => (
-            <AttemptRow
-              key={r}
-              wordLens={wordLens}
-              guess={guesses[r]}
-              isCurrent={r === guesses.length && !gameOver}
-              isReveal={r === guesses.length && showRevealRow}
-              lockedMask={lockedMask}
-              currentRowArr={row.currentRowArr}
-              targetGuess={target.guess}
-            />
-          ))}
+          {textGuesses.length > 0 && (
+            <div className="flex w-full flex-col items-center gap-1 font-mono text-[12px] text-ink-soft">
+              {textGuesses.map((guess, i) => (
+                <div key={i} className="flex flex-wrap items-center justify-center gap-1">
+                  <span className="mr-0.5">Guess {i + 1}:</span>
+                  {guess.word.split("").map((letter, c) => (
+                    <span
+                      key={c}
+                      className={`flex size-4 items-center justify-center rounded-sm text-[10px] font-bold uppercase text-white ${
+                        resultClass[guess.result[c]]
+                      }`}
+                    >
+                      {letter}
+                    </span>
+                  ))}
+                </div>
+              ))}
+            </div>
+          )}
+          <AttemptRow
+            wordLens={wordLens}
+            guess={gameWon ? lastGuess : undefined}
+            isCurrent={!gameOver}
+            isReveal={showRevealRow}
+            lockedMask={lockedMask}
+            currentRowArr={row.currentRowArr}
+            targetGuess={target.guess}
+          />
         </div>
       </div>
       <div className="flex min-w-[54px] shrink-0 flex-col items-center justify-center pl-4">
