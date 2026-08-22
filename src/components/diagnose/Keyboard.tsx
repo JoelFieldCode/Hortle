@@ -23,7 +23,7 @@ export function Keyboard() {
                 onClick={() => (key === "ENTER" ? submitGuess() : handleKey(key))}
                 className={`min-w-0 flex-1 cursor-pointer select-none rounded-md border border-paper-line bg-card py-[clamp(11px,3.6vw,16px)] text-center font-sans text-[clamp(13px,3.8vw,17px)] font-semibold text-ink transition active:translate-y-px focus-visible:outline-2 focus-visible:outline-disorder focus-visible:outline-offset-2 ${
                   wide
-                    ? "max-w-[76px] flex-[1.7_1_0] text-[clamp(10px,3.2vw,13px)] tracking-[0.04em]"
+                    ? "max-w-[90px] flex-[2.6_1_0] px-1 text-[clamp(9px,2.8vw,12px)] tracking-[-0.02em]"
                     : "max-w-[44px]"
                 }`}
               >
