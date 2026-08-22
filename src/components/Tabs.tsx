@@ -18,6 +18,7 @@ export function Tabs() {
           <button
             key={tab.id}
             type="button"
+            aria-current={active ? "page" : undefined}
             onClick={() => setMode(tab.id)}
             className={`rounded-full border px-[18px] py-2 font-sans text-[13px] font-semibold tracking-[0.02em] transition-colors cursor-pointer focus-visible:outline-2 focus-visible:outline-disorder focus-visible:outline-offset-2 hover:-translate-y-px ${
               active

@@ -60,7 +60,10 @@ export function DiagnosePanel() {
         </Button>
       </div>
 
-      <div className="mb-2.5 min-h-5 text-center text-[13px] font-semibold text-green-700">
+      <div
+        className="mb-2.5 min-h-5 text-center text-[13px] font-semibold text-green-700"
+        aria-live="polite"
+      >
         {status || "\u00a0"}
       </div>
 

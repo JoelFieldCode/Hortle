@@ -42,20 +42,18 @@ export function StudyProvider({ children }: { children: ReactNode }) {
 
   const toggleFilter = useCallback(
     (key: Category | "all") => {
-      setFilters((current) => {
-        const next = new Set(current);
-        if (key === "all") {
-          ALL_CATEGORIES.forEach((cat) => next.add(cat));
-        } else if (next.has(key) && next.size > 1) {
-          next.delete(key);
-        } else {
-          next.add(key);
-        }
-        rebuild(next);
-        return next;
-      });
+      const next = new Set(filters);
+      if (key === "all") {
+        ALL_CATEGORIES.forEach((cat) => next.add(cat));
+      } else if (next.has(key) && next.size > 1) {
+        next.delete(key);
+      } else {
+        next.add(key);
+      }
+      setFilters(next);
+      rebuild(next);
     },
-    [rebuild],
+    [filters, rebuild],
   );
 
   const flip = useCallback(() => {
